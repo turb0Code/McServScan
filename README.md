@@ -8,21 +8,17 @@
 ## USAGE
 
 1. Download python 3.8 or newer.
-2. Install the nmap library with pip:
+2. Download the latest release of *MC Serv Scan*.
+3. Install all libraries with command:
 ```
-pip install nmap
+python3 main.py -setup
 ```
-3. Install the requests library with pip:
-```
-pip install requests
-```
-4. Download the latest release of *MC Serv Scan*.
-5. Run the following command in the script's directory:
+4. Run the following command in the script's directory:
 ```
 python3 main.py
 ```
-6. Follow the instructions provided in the console.
-7. Access the saved results in the console, text, or even .csv files!
+5. Follow the instructions provided in the console.
+6. Access the saved results in the console, text, or even .csv files!
 
 ## INFO
 

@@ -2,19 +2,38 @@ import nmap
 import time
 import csv
 import os
+import sys
 from requests import get, head
 from json import loads
 
 #########################
 
-print(r"""
-  __  __  _____     _____                     _____
- |  \/  |/ ____|   / ____|                   / ____|
- | \  / | |       | (___   ___ _ ____   __  | (___   ___ __ _ _ __
- | |\/| | |        \___ \ / _ \ '__\ \ / /   \___ \ / __/ _` | '_ \
- | |  | | |____    ____) |  __/ |   \ V /    ____) | (_| (_| | | | |
- |_|  |_|\_____|  |_____/ \___|_|    \_/    |_____/ \___\__,_|_| |_|
- """)
+colors = {
+    "red" : '\033[91m',
+    "green" : '\033[92m',
+    "blue" : '\033[94m',
+    "yellow" : '\033[93m',
+    "white" : '\033[0m',
+    "cyan" : '\033[96m'
+}
+
+#########################
+
+print(colors["green"] + r' __  __  ___' + colors["cyan"] + r'__     _____' + colors["green"] + r'                     _____')
+print(r'|  \/  |/ _' + colors["cyan"] + r'___|   / ____|' + colors["green"] + r'                   / ____|')
+print(r'| \  / | |' + colors["cyan"] + r'       | (___   ___ _ ____   __' + colors["green"] + r'  | (___   ___ __ _ _ __')
+print(r"| |\/| | |" + colors["cyan"] + r"        \___ \ / _ \ '__\ \ / /" + colors["green"] + r"   \___ \ / __/ _` | '_ \ ")
+print(r'| |  | | |_' + colors["cyan"] + r'___    ____) |  __/ |   \ V /' + colors["green"] + r'    ____) | (_| (_| | | | |')
+print(r'|_|  |_|\___' + colors["cyan"] + r'__|  |_____/ \___|_|    \_/' + colors["green"] + r'    |_____/ \___\__,_|_| |_|')
+
+#########################
+
+if len(sys.argv) > 1 and sys.argv[1] == "-setup":
+    print("\n" + "-"*20 + "\nInstalling all necessary libriaries: ")
+    os.system("pip3 install python-nmap")
+    os.system("pip3 install requests")
+    print("\n" + "-"*20 + "\nSuccessfully installed!")
+    exit(0)
 
 #########################
 
@@ -23,13 +42,13 @@ if not os.path.exists("results"):
 
 #########################
 
-print("\n" + "-"*20 + "\nType server address: ")
+print("\n" + colors["cyan"] + "-"*20 + colors["yellow"] + "\nType server address: " + colors["white"])
 addr = input("> ").strip()
 
-print("\n" + "-"*20 + "\nSpecify PORT range [min-max]. \nPress ENTER to continue with default range (10000-60000).")
+print("\n" + colors["cyan"] + "-"*20 + colors["yellow"] + "\nSpecify PORT range [min-max]. \nPress ENTER to continue with default range (10000-60000)." + colors["white"])
 ports = input("> ").strip()
 
-print("\n" + "-"*20 + "\nDo you want to create also .txt file with scan results (.csv file is created automatically)? [Y/N]")
+print("\n" + colors["cyan"] + "-"*20 + colors["yellow"] + "\nDo you want to create also .txt file with scan results (.csv file is created automatically)? [Y/N]" + colors["white"])
 user_choice = input("> ").strip()
 
 txt_create = True
@@ -42,14 +61,14 @@ if ports == "":
 try:
     test = head(f"http://{addr}")
 except:
-    print('WRONG SERVER ADDRESS!')
+    print(colors["red"] + 'WRONG SERVER ADDRESS!' + colors["white"])
     exit(0)
 
-print("\n" + "-"*20 + f"\n\nTARGET -> {addr}\n" + "\n" + "-"*20 + "\n")
+print("\n" + colors["cyan"]  + "-"*20 + colors["red"] + f"\n\nTARGET ->" + colors["white"] + f" {addr}\n" + "\n" + colors["cyan"] + "-"*20 + "\n")
 
 #########################
 
-print(f"[{time.strftime('%H:%M:%S', time.localtime())}] Scan started...\n")
+print(colors["yellow"] + f"[{time.strftime('%H:%M:%S', time.localtime())}] Scan started...\n" + colors["white"])
 
 start = time.time()
 
@@ -57,7 +76,7 @@ scanner = nmap.PortScanner()
 
 scanner.scan(str(addr), ports)
 
-print(f"Scanned successfully in: {time.time() - start} seconds. \n" + "\n" + "-"*20)
+print(colors["yellow"] + f"Scanned successfully in: {time.time() - start} seconds. \n" + colors["cyan"] + "\n" + "-"*20 + colors["white"])
 
 #########################
 
@@ -106,7 +125,7 @@ with open(f"results/{addr}.csv", "w", newline="") as csv_file:
                 row['VERSION'] = "NO DATA"
 
             try:
-                players = f"ONLINE: {data['players']['online']} | MAX: {data['players']['max']}"
+                players = colors["blue"] + f" ONLINE:" + colors["white"] + f" {data['players']['online']} |" + colors["blue"] + f" MAX:" + colors["white"] + f" {data['players']['max']}"
                 row["ONLINE_PLAYERS"] = data['players']['online']
                 row["MAX_PLAYERS"] = data['players']['max']
             except KeyError:
@@ -137,7 +156,7 @@ with open(f"results/{addr}.csv", "w", newline="") as csv_file:
                 my_motd += "\n|  | NO MOTD"
                 row["MOTD"] = "NO DATA"
 
-            print("\n" + f"{data['ip']}:{data['port']} \n|  VERSION: {version} \n|  {players} \n|  SOFTWARE: {software} \n|  PLUGINS:{plugins} \n|  MOTD: {my_motd} \n\n----------------------")
+            print("\n" + colors["red"] + f"{data['ip']}:{data['port']}" + colors["white"] + f"\n|" + colors["blue"] + f"  VERSION: " + colors["white"] + f"{version} \n|" + f" {players}" +  f"\n|" + colors["blue"] + f"  SOFTWARE: {software}" + colors["white"] + f"\n|" + colors["blue"] + f"  PLUGINS:" + colors["white"] + f"{plugins} \n|" + colors["blue"] + f"  MOTD:" + colors["white"] + f"{my_motd}" + colors["cyan"] + "\n\n----------------------" + colors["white"])
 
             if txt_create == True:
                 txt_file.write("\n" + f"{data['ip']}:{data['port']} \n|  VERSION: {version} \n|  {players} \n|  SOFTWARE: {software} \n|  PLUGINS:{plugins} \n|  MOTD: {my_motd} \n\n----------------------\n")
